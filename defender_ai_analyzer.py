@@ -81,6 +81,30 @@ def get_incidents(access_token):
 # ============================================================
 
 def prepare_incident(incident):
+    normalized_alerts = []
+
+    for alert in incident.get("alerts", []):
+
+        normalized_alert = {
+            "alertId": alert.get("alertId"),
+            "title": alert.get("title"),
+            "description": alert.get("description"),
+            "severity": alert.get("severity"),
+            "status": alert.get("status"),
+            "category": alert.get("category"),
+            "serviceSource": alert.get("serviceSource"),
+            "detectionSource": alert.get("detectionSource"),
+            "firstActivity": alert.get("firstActivity"),
+            "lastActivity": alert.get("lastActivity"),
+            "classification": alert.get("classification"),
+            "determination": alert.get("determination"),
+            "threatFamilyName": alert.get("threatFamilyName"),
+            "mitreTechniques": alert.get("mitreTechniques", []),
+            "devices": alert.get("devices", []),
+            "entities": alert.get("entities", [])
+        }
+
+    normalized_alerts.append(normalized_alert)
 
     incident_for_ai = {
         "incidentId": incident.get("incidentId"),
@@ -91,9 +115,8 @@ def prepare_incident(incident):
         "determination": incident.get("determination"),
         "createdTime": incident.get("createdTime"),
         "lastUpdateTime": incident.get("lastUpdateTime"),
-        "assignedTo": incident.get("assignedTo"),
         "tags": incident.get("tags"),
-        "alerts": incident.get("alerts", [])
+        "alerts": normalized_alerts
     }
 
     return incident_for_ai
@@ -174,7 +197,7 @@ def analyze_with_ollama(prompt):
     response = requests.post(
         OLLAMA_URL,
         json=payload,
-        timeout=180
+        timeout=600
     )
 
     response.raise_for_status()
@@ -210,6 +233,13 @@ def main():
 
     # For now, analyze only the first incident
     incident = incidents[0]
+
+    with open("incident_sample.json", "w") as f:
+        json.dump(incident, f, indent=2)
+
+
+    print("Saved incident to incident_sample.json")
+
 
 
     print("\nSelected incident:")

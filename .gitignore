@@ -37,3 +37,8 @@ Thumbs.db
 *.tmp
 *.swp
 
+# Defender XDR incident data
+incident_sample.json
+incident_*.json
+
+
