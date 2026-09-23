@@ -40,5 +40,5 @@ Thumbs.db
 # Defender XDR incident data
 incident_sample.json
 incident_*.json
-
+nomalized_incident.json
 

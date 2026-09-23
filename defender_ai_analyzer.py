@@ -24,7 +24,7 @@ DEFENDER_INCIDENTS_URL = (
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
-OLLAMA_MODEL = "llama3.2:3b"
+OLLAMA_MODEL = "llama3.2:1b"
 
 # ============================================================
 # 3. GET ACCESS TOKEN FROM MICROSOFT ENTRA ID
@@ -78,7 +78,46 @@ def get_incidents(access_token):
 
 # ============================================================
 # 5. PREPARE INCIDENT FOR AI
-# ============================================================
+# ===========================================================
+def normalize_device(device):
+    """
+    Extract security-relevant information from a Defender XDR device.
+    """
+
+    return {
+        "deviceName": device.get("deviceDnsName"),
+        "osPlatform": device.get("osPlatform"),
+        "osVersion": device.get("version"),
+        "healthStatus": device.get("healthStatus"),
+        "riskScore": device.get("riskScore"),
+        "firstSeen": device.get("firstSeen"),
+        "onboardingStatus": device.get("onboardingStatus"),
+        "tags": device.get("tags", []),
+        "loggedOnUsers": device.get("loggedOnUsers", [])
+    }
+
+
+def normalize_entity(entity):
+    """
+    Extract security-relevant information from a Defender XDR entity.
+    """
+
+    entity_type = entity.get("entityType")
+
+    normalized = {
+        "entityType": entity_type,
+        "verdict": entity.get("verdict"),
+        "remediationStatus": entity.get("remediationStatus")
+    }
+
+    if entity_type == "User":
+        normalized["accountName"] = entity.get("accountName")
+        normalized["domainName"] = entity.get("domainName")
+
+    elif entity_type == "Ip":
+        normalized["ipAddress"] = entity.get("ipAddress")
+
+    return normalized
 
 def prepare_incident(incident):
     normalized_alerts = []
@@ -100,11 +139,17 @@ def prepare_incident(incident):
             "determination": alert.get("determination"),
             "threatFamilyName": alert.get("threatFamilyName"),
             "mitreTechniques": alert.get("mitreTechniques", []),
-            "devices": alert.get("devices", []),
-            "entities": alert.get("entities", [])
+            "devices": [
+                normalize_device(device)
+                for device in alert.get("devices", [])
+            ],
+            "entities": [
+                normalize_entity(entity)
+                for entity in alert.get("entities", [])
+            ]
         }
 
-    normalized_alerts.append(normalized_alert)
+        normalized_alerts.append(normalized_alert)
 
     incident_for_ai = {
         "incidentId": incident.get("incidentId"),
@@ -115,15 +160,15 @@ def prepare_incident(incident):
         "determination": incident.get("determination"),
         "createdTime": incident.get("createdTime"),
         "lastUpdateTime": incident.get("lastUpdateTime"),
-        "tags": incident.get("tags"),
+        "tags": incident.get("tags", []),
         "alerts": normalized_alerts
     }
 
     return incident_for_ai
 
-# ============================================================
+# ================================================================
 # 6. BUILD PROMPT FOR LLAMA
-# ============================================================
+# ==========================================================
 
 def build_prompt(incident):
 
