@@ -304,6 +304,11 @@ def main():
 
     incident_for_ai = prepare_incident(incident)
 
+    with open("normalized_incident.json", "w") as f:
+        json.dump(incident_for_ai, f, indent=2)
+
+    print("Saved normalized incident to normalized_incident.json")
+
     prompt = build_prompt(incident_for_ai)
 
 

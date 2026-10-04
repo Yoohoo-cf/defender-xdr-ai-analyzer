@@ -1,0 +1,77 @@
+{
+  "incidentId": 10,
+  "incidentName": "Suspected DCSync attack (replication of directory services)",
+  "severity": "High",
+  "status": "Active",
+  "classification": "Unknown",
+  "determination": "NotAvailable",
+  "createdTime": "2026-08-20T02:02:44.4266667Z",
+  "lastUpdateTime": "2026-08-20T02:02:44.4266667Z",
+  "tags": [],
+  "alerts": [
+    {
+      "alertId": "aa0d90bccb-6a4a-45d9-bd9f-bbb20e4ce962",
+      "title": "Suspected DCSync attack (replication of directory services)",
+      "description": "MSOL_528e7bdaeed7 on 10.160.44.5 (10.160.44.5) sent 1 replication request to DC01.",
+      "severity": "High",
+      "status": "New",
+      "category": "CredentialAccess",
+      "serviceSource": "MicrosoftDefenderForIdentity",
+      "detectionSource": "AzureATP",
+      "firstActivity": "2026-08-20T01:57:33.1241138Z",
+      "lastActivity": "2026-08-20T01:57:33.1241138Z",
+      "classification": null,
+      "determination": null,
+      "threatFamilyName": null,
+      "mitreTechniques": [
+        "T1003",
+        "T1003.006"
+      ],
+      "devices": [
+        {
+          "deviceName": "dc01.coffee.dou",
+          "osPlatform": "WindowsServer2022",
+          "osVersion": "21H2",
+          "healthStatus": "Inactive",
+          "riskScore": "None",
+          "firstSeen": "2026-07-16T07:17:10.8990268Z",
+          "onboardingStatus": "Onboarded",
+          "tags": [],
+          "loggedOnUsers": []
+        },
+        {
+          "deviceName": "10.160.44.5",
+          "osPlatform": null,
+          "osVersion": null,
+          "healthStatus": null,
+          "riskScore": null,
+          "firstSeen": null,
+          "onboardingStatus": null,
+          "tags": [],
+          "loggedOnUsers": []
+        }
+      ],
+      "entities": [
+        {
+          "entityType": "User",
+          "verdict": "Suspicious",
+          "remediationStatus": "None",
+          "accountName": "MSOL_528e7bdaeed7",
+          "domainName": "coffee.dou"
+        },
+        {
+          "entityType": "Ip",
+          "verdict": "Suspicious",
+          "remediationStatus": "None",
+          "ipAddress": "10.160.44.5"
+        },
+        {
+          "entityType": "Ip",
+          "verdict": "Suspicious",
+          "remediationStatus": "None",
+          "ipAddress": "::1"
+        }
+      ]
+    }
+  ]
+}
