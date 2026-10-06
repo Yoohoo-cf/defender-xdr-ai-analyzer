@@ -57,9 +57,17 @@ def query_log_analytics(access_token):
     )
 
     query = """
-search *
-| take 5
-"""
+    DeviceEvents
+    | project
+    Timestamp,
+    DeviceName,
+    ActionType,
+    InitiatingProcessAccountName,
+    InitiatingProcessFileName,
+    InitiatingProcessCommandLine
+    | order by Timestamp desc
+    | take 10
+    """
 
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -68,8 +76,12 @@ search *
 
     body = {
         "query": query,
-        "timespan": "P1D"
+        "timespan": "P7D"
     }
+
+    print("\nSending query to Log Analytics workspace...")
+    print("Query:", query)
+    print("Timespan:", body["timespan"])
 
     response = requests.post(
         url,
