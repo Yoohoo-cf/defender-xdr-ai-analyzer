@@ -46,7 +46,7 @@ def enrich_incident_with_device_activity(incident):
 
     enriched_incident = incident.copy()
 
-    enriched_incident["enriched_device_activity "] = {}
+    enriched_incident["enriched_device_activity"] = {}
     enriched_incident["enrichment_errors"] = {}
 
     if not device_names:
@@ -57,8 +57,9 @@ def enrich_incident_with_device_activity(incident):
     for device_name in device_names:
         try:
             activity_data = query_device_activity(access_token, device_name)
-            enriched_incident["enriched_device_activity "][device_name] = activity_data
+            enriched_incident["enriched_device_activity"][device_name] = activity_data
         except Exception as e:
+
             enriched_incident["enriched_device_activity"][device_name] = []
             enriched_incident["enrichment_errors"][device_name] = str(e)
 
